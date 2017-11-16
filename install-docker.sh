@@ -29,9 +29,9 @@ sudo yum-config-manager --quiet \
 
 sudo yum install --assumeyes --quiet docker-ce
 
-# 3. Start Docker.
+# 3. Start Docker. Report if it failed.
 
-sudo systemctl start docker
+sudo systemctl start docker || sudo systemctl status docker.service
 
 # 4. Verify that docker is installed correctly by running the hello-world image.
 
