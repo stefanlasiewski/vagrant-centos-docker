@@ -36,3 +36,9 @@ sudo systemctl start docker || sudo systemctl status docker.service
 # 4. Verify that docker is installed correctly by running the hello-world image.
 
 sudo docker run hello-world
+
+# Post-installation steps for Linux, per
+# https://docs.docker.com/engine/installation/linux/linux-postinstall/
+
+# Configure Docker to start on boot
+sudo systemctl enable docker
