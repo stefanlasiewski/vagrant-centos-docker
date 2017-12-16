@@ -5,13 +5,16 @@
 # * https://gist.github.com/dpneumo/279d6bc5dcbe5609cfcb8ec48499701a
 # * https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index
 
+# According to https://discuss.linuxcontainers.org/t/centos-7-kernel-514-693-cannot-start-any-nodes-after-update/641/16
+# Both user_namespace.enable=1 namespace.unpriv_enable=1 may be needed
+
 set -e # Exit if any subcommand fails
 #set -x # Print commands for troubleshooting
 
 enable-user-namespaces () {
 
-  echo "Add the namespace.unpriv_enable=1 option to the kernel (vmlinuz*) command line."
-  grubby --args="user_namespace.enable=1" --update-kernel="$(grubby --default-kernel)"
+  echo "Add BOTH user_namespace.enable=1 namespace.unpriv_enable=1 option to the kernel (vmlinuz*) command line."
+  grubby --args="user_namespace.enable=1 namespace.unpriv_enable=1" --update-kernel="$(grubby --default-kernel)"
 
   echo "Add a value to the user.max_user_namespaces kernel tuneable so it is set permanently"
   echo "user.max_user_namespaces=15076" >> /etc/sysctl.conf
