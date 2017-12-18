@@ -5,32 +5,37 @@
 # * https://gist.github.com/dpneumo/279d6bc5dcbe5609cfcb8ec48499701a
 # * https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index
 
-# According to https://discuss.linuxcontainers.org/t/centos-7-kernel-514-693-cannot-start-any-nodes-after-update/641/16
-# Both user_namespace.enable=1 namespace.unpriv_enable=1 may be needed
+# According to these links, both user_namespace.enable=1 namespace.unpriv_enable=1 may be needed:
+# * https://discuss.linuxcontainers.org/t/centos-7-kernel-514-693-cannot-start-any-nodes-after-update/641/16
+# * https://github.com/moby/moby/issues/35806
+# * https://github.com/moby/moby/issues/35336
 
 set -e # Exit if any subcommand fails
 #set -x # Print commands for troubleshooting
 
 enable-user-namespaces () {
 
-  echo "Add BOTH user_namespace.enable=1 namespace.unpriv_enable=1 option to the kernel (vmlinuz*) command line."
+  echo "INFO: Add BOTH user_namespace.enable=1 namespace.unpriv_enable=1 option to the kernel (vmlinuz*) command line."
   grubby --args="user_namespace.enable=1 namespace.unpriv_enable=1" --update-kernel="$(grubby --default-kernel)"
 
-  echo "Add a value to the user.max_user_namespaces kernel tuneable so it is set permanently"
+  echo "INFO: Kernel command arguments will now be:"
+  grubby --info "$(grubby --default-kernel)" | egrep "^args"
+
+  echo "INFO: Add a value to the user.max_user_namespaces kernel tuneable so it is set permanently"
   echo "user.max_user_namespaces=15076" >> /etc/sysctl.conf
 
-  echo "Assign users and groups to be mapped by user namespaces."
+  echo "INFO: Assign users and groups to be mapped by User Namespaces."
   echo dockremap:808080:1000 >> /etc/subuid
   echo dockremap:808080:1000 >> /etc/subgid
 
-  echo "Copy daemon.json which enables User Namespaces"
+  echo "INFO: Copy Docker's daemon.json which enables User Namespaces"
   # TODO: What if daemon.json already exists?
   cp -v /vagrant/daemon.json /etc/docker/daemon.json
 }
 
 enable-user-namespaces
 
-echo "User Namespaces now enabled. Reboot the system to activate them."
+echo "INFO: User Namespaces now enabled. Reboot the system to activate them."
 
-echo "After reboot, check that User Namespaces are enabled per https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index." 
+echo "INFO: After reboot, check that User Namespaces are enabled per https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index." 
 

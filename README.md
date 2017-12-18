@@ -26,13 +26,27 @@ Bringing machine 'default' up with 'virtualbox' provider...
 
 # Testing Docker with Kernel User Namespaces
 
-I am testing Docker with Kernel User Namespaces. On CentOS 7.4, User Namespaces are disabled by Default. To enable them, run the script `enable-user-namespaces.sh` (Modify as necessary) & reboot the VM:
+I am testing Docker with Kernel User Namespaces.
+
+On RHEL/CentOS 7.2 - 7.3, User Namespaces were an experimental "Tech Preview". They are now fully supported in 7.4 according to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/7.4_release_notes/index .
+
+On RHEL 7.4, User Namespaces are enabled in the Kernel by passing on `user_namespace.enable=1` flag. However, to do useful things with User Namespaces and Docker, the root user within the user namespace will needs the ability to mount and unmount things. Therefore, we also enable `namespace.unpriv_enable=1`.
+
+To enable them here, run the script `enable-user-namespaces.sh` (Modify as necessary) & reboot the VM:
+
 
 ```
 $ vagrant ssh
-[vagrant@localhost ~]$ sudo bash /vagrant/enable-user-namespaces.sh
+[vagrant@localhost ~]$ sudo bash /vagrant/enable-user-namespaces.sh 
+INFO: Add BOTH user_namespace.enable=1 namespace.unpriv_enable=1 option to the kernel (vmlinuz*) command line.
+INFO: Kernel command arguments will now be:
+args="ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet namespace.unpriv_enable=1 user_namespace.enable=1"
+INFO: Add a value to the user.max_user_namespaces kernel tuneable so it is set permanently
+INFO: Assign users and groups to be mapped by User Namespaces.
+INFO: Copy Docker's daemon.json which enables User Namespaces
 ‘/vagrant/daemon.json’ -> ‘/etc/docker/daemon.json’
-Reboot the system
+INFO: User Namespaces now enabled. Reboot the system to activate them.
+INFO: After reboot, check that User Namespaces are enabled per https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index.
 [vagrant@localhost ~]$
 ```
 
