@@ -25,8 +25,8 @@ enable-user-namespaces () {
   echo "user.max_user_namespaces=15076" >> /etc/sysctl.conf
 
   echo "INFO: Assign users and groups to be mapped by User Namespaces."
-  echo dockremap:808080:1000 >> /etc/subuid
-  echo dockremap:808080:1000 >> /etc/subgid
+  [[ $(grep dockremap /etc/subuid) ]] || echo dockremap:808080:1000 >> /etc/subuid
+  [[ $(grep dockremap /etc/subgid) ]] || echo dockremap:808080:1000 >> /etc/subgid
 
   echo "INFO: Copy Docker's daemon.json which enables User Namespaces"
   # TODO: What if daemon.json already exists?
