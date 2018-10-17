@@ -1,6 +1,6 @@
 # vagrant-centos-docker
 
-Provides a CentOS 7 host running Docker CE, and installs Docker following the
+Provides a CentOS 7 host running Docker CE (Community Edition). Installs Docker following the
 official instructions at https://docs.docker.com/engine/installation/linux/docker-ce/centos/
 as closely as practical.
 
@@ -48,7 +48,7 @@ References:
 * https://gist.github.com/dpneumo/279d6bc5dcbe5609cfcb8ec48499701a
 * https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index
 
-According to these links, both user_namespace.enable=1 namespace.unpriv_enable=1 may be needed:
+According to these links, both `user_namespace.enable=1` `namespace.unpriv_enable=1` may be needed:
 * https://discuss.linuxcontainers.org/t/centos-7-kernel-514-693-cannot-start-any-nodes-after-update/641/16
 * https://github.com/moby/moby/issues/35806
 * https://github.com/moby/moby/issues/35336
@@ -75,11 +75,11 @@ INFO: After reboot, check that User Namespaces are enabled per https://access.re
 ## After reboot, check that User Namespaces are enabled.
 
 We are not running Atomic here, but the Atomic documentation provides some
-hints on determing if User Namespaces are enabled at:
+hints on determining if User Namespaces are enabled at:
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index#user_namespaces_options
 
 ```
-[vagrant@localhost ~]$ cat /proc/cmdline |grep --color  namespace
+[vagrant@localhost ~]$ cat /proc/cmdline |grep --color namespace
 BOOT_IMAGE=/vmlinuz-3.10.0-693.5.2.el7.x86_64 root=/dev/mapper/VolGroup00-LogVol00 ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet namespace.unpriv_enable=1 user_namespace.enable=1
 [vagrant@localhost ~]$
 ```
@@ -88,7 +88,7 @@ OR, as root:
 
 ```
 [vagrant@localhost ~]$ sudo bash
-[root@localhost vagrant]# grubby --info "$(grubby --default-kernel)" |grep namespace
+[root@localhost vagrant]# grubby --info "$(grubby --default-kernel)" | grep namespace
 args="ro no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=VolGroup00/LogVol00 rd.lvm.lv=VolGroup00/LogVol01 rhgb quiet namespace.unpriv_enable=1 user_namespace.enable=1"
 [root@localhost vagrant]#
 ```
@@ -103,7 +103,7 @@ user.max_user_namespaces = 15076
 And check Docker itself
 
 ```
-[vagrant@localhost ~]$ sudo docker info |grep --after-context=5 "Security Options"
+[vagrant@localhost ~]$ sudo docker info | grep --after-context=5 "Security Options"
 Security Options:
  seccomp
    Profile: default
