@@ -1,10 +1,13 @@
 # vagrant-centos-docker
 
-Provides a CentOS 7 host running Docker CE, installed per https://docs.docker.com/engine/installation/linux/docker-ce/centos/
+Provides a CentOS 7 host running Docker CE, and installs Docker following the
+official instructions at https://docs.docker.com/engine/installation/linux/docker-ce/centos/
+as closely as practical.
 
 Installs CentOS, Docker CE and tests the finished image with `docker run hello-world`.
 
-Supports Docker CE Stable, Edge and Test. See `install-docker.sh` for details.
+Supports Docker CE Stable, Edge [Deprecated in July 2018](https://docs.docker.com/edge/)
+and Test. See `install-docker.sh` for details.
 
 # Usage
 
@@ -26,11 +29,19 @@ Bringing machine 'default' up with 'virtualbox' provider...
 
 # Testing Docker with Kernel User Namespaces
 
-I am testing Docker with Kernel User Namespaces. This repo includes a simple shell script, `enable-user-namespaces.sh` which can be used with or without Vagrant, or a just a guide on any CentOS 7.4+ host.
+I am testing Docker with Kernel User Namespaces. This repo includes a simple
+shell script, `enable-user-namespaces.sh` which can be used with or without
+Vagrant, or a just a guide on any CentOS 7.4+ host.
 
-On RHEL/CentOS 7.2 - 7.3, User Namespaces were an experimental "Tech Preview". They are now fully supported in 7.4 according to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/7.4_release_notes/index .
+On RHEL/CentOS 7.2 - 7.3, User Namespaces were an experimental "Tech Preview".
+They are now fully supported in 7.4 according to https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/7.4_release_notes/index .
 
-On RHEL 7.4, User Namespaces are enabled in the Kernel by passing on `user_namespace.enable=1` flag. However, to do useful things with User Namespaces and Docker, the root user within the user namespace will needs the ability to mount and unmount things. Therefore, we also enable `namespace.unpriv_enable=1`, which is an *experimental* (Tech Preview) option in RHEL/CentOS 7.4.
+On RHEL 7.4, User Namespaces are enabled in the Kernel by passing on
+`user_namespace.enable=1` flag. However, to do useful things with User
+Namespaces and Docker, the root user within the user namespace will needs the
+ability to mount and unmount things. Therefore, we also enable
+`namespace.unpriv_enable=1`, which is an *experimental* (Tech Preview) option
+in RHEL/CentOS 7.4.
 
 References:
 * https://github.com/procszoo/procszoo/wiki/How-to-enable-%22user%22-namespace-in-RHEL7-and-CentOS7%3F
@@ -42,7 +53,8 @@ According to these links, both user_namespace.enable=1 namespace.unpriv_enable=1
 * https://github.com/moby/moby/issues/35806
 * https://github.com/moby/moby/issues/35336
 
-To enable both User Namespaces and enable unprivileged access here, run the script `enable-user-namespaces.sh` (Modify as necessary) & reboot the VM.
+To enable both User Namespaces and enable unprivileged access here, run the
+script `enable-user-namespaces.sh` (Modify as necessary) & reboot the VM.
 
 
 ```
@@ -62,8 +74,9 @@ INFO: After reboot, check that User Namespaces are enabled per https://access.re
 
 ## After reboot, check that User Namespaces are enabled.
 
-We are not running Atomic here, but the Atomic documentation provides some hints
-on determing if User Namespaces are enabled at: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index#user_namespaces_options
+We are not running Atomic here, but the Atomic documentation provides some
+hints on determing if User Namespaces are enabled at:
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/getting_started_with_containers/index#user_namespaces_options
 
 ```
 [vagrant@localhost ~]$ cat /proc/cmdline |grep --color  namespace
